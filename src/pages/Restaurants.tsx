@@ -12,7 +12,7 @@ const restaurantData = [
     rating: 4.8,
     image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=1470&ixlib=rb-4.0.3",
     address: "123 Flour Street, Pasta City",
-    phone: "9689545085"
+    phone: "9356813351"
   },
   {
     id: 2,
@@ -21,7 +21,7 @@ const restaurantData = [
     rating: 4.7,
     image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=1470&ixlib=rb-4.0.3",
     address: "456 Rice Avenue, Sushi Town",
-    phone: "9689545084"
+    phone: "9021368226"
   },
   {
     id: 3,
@@ -30,7 +30,7 @@ const restaurantData = [
     rating: 4.9,
     image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=1470&ixlib=rb-4.0.3",
     address: "789 Curry Lane, Spice City",
-    phone: "9689545083"
+    phone: "9689545086"
   }
 ];
 
