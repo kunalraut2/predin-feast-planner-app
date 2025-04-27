@@ -9,10 +9,83 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, Clock } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 const Bookings = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const [restaurant, setRestaurant] = useState<string>("");
+  const [guests, setGuests] = useState<string>("");
+  const [time, setTime] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [specialRequests, setSpecialRequests] = useState<string>("");
+  const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const handleSubmit = async () => {
+    if (!restaurant || !guests || !time || !date || !name || !email || !phone) {
+      toast({
+        title: "Missing information",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Format date and time for storage
+      const bookingDateTime = new Date(date);
+      const [hours, minutes] = time.split(':').map(Number);
+      bookingDateTime.setHours(hours, minutes);
+      
+      // Prepare booking data
+      const bookingData = {
+        restaurant_id: restaurant,
+        booking_date: bookingDateTime.toISOString(),
+        guest_count: parseInt(guests),
+        special_requests: specialRequests,
+        status: 'pending',
+        user_id: null, // Will be updated with auth integration
+        booking_amount: 0
+      };
+      
+      // Insert booking into database
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert(bookingData)
+        .select('id')
+        .single();
+      
+      if (error) throw error;
+      
+      // Show confirmation dialog
+      setShowConfirmation(true);
+      
+    } catch (error) {
+      console.error('Error creating booking:', error);
+      toast({
+        title: "Booking failed",
+        description: "There was an error creating your booking. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   
+  const viewBookings = () => {
+    setShowConfirmation(false);
+    navigate('/profile'); // Redirect to profile page where bookings are shown
+  };
+
   return (
     <div className="max-w-3xl mx-auto">
       <h1 className="text-4xl font-bold mb-4">Book a Table</h1>
@@ -27,7 +100,7 @@ const Bookings = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="restaurant">Restaurant</Label>
-              <Select>
+              <Select value={restaurant} onValueChange={setRestaurant}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a restaurant" />
                 </SelectTrigger>
@@ -41,7 +114,7 @@ const Bookings = () => {
             
             <div className="space-y-2">
               <Label htmlFor="guests">Number of Guests</Label>
-              <Select>
+              <Select value={guests} onValueChange={setGuests}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select number" />
                 </SelectTrigger>
@@ -82,7 +155,7 @@ const Bookings = () => {
             
             <div className="space-y-2">
               <Label>Time</Label>
-              <Select>
+              <Select value={time} onValueChange={setTime}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select time" />
                 </SelectTrigger>
@@ -103,30 +176,85 @@ const Bookings = () => {
           
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
-            <Input id="name" placeholder="Your full name" />
+            <Input 
+              id="name" 
+              placeholder="Your full name" 
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="Your email address" />
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="Your email address" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="phone">Phone</Label>
-              <Input id="phone" type="tel" placeholder="Your phone number" />
+              <Input 
+                id="phone" 
+                type="tel" 
+                placeholder="Your phone number" 
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
             </div>
           </div>
           
           <div className="space-y-2">
             <Label htmlFor="specialRequests">Special Requests (Optional)</Label>
-            <Input id="specialRequests" placeholder="Any special requirements or notes" />
+            <Input 
+              id="specialRequests" 
+              placeholder="Any special requirements or notes" 
+              value={specialRequests}
+              onChange={(e) => setSpecialRequests(e.target.value)}
+            />
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full bg-primary-purple hover:bg-secondary-purple">Confirm Reservation</Button>
+          <Button 
+            className="w-full bg-primary-purple hover:bg-secondary-purple"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Processing..." : "Confirm Reservation"}
+          </Button>
         </CardFooter>
       </Card>
+      
+      {/* Confirmation Dialog */}
+      <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reservation Confirmed!</DialogTitle>
+            <DialogDescription>
+              Your table has been reserved successfully. We look forward to serving you!
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 my-4">
+            <div className="bg-gray-50 p-4 rounded-md">
+              <p><strong>Restaurant:</strong> {restaurant?.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</p>
+              <p><strong>Date & Time:</strong> {date ? format(date, "PPP") : ""} at {time ? `${time.split(':')[0]}:${time.split(':')[1]} ${parseInt(time.split(':')[0]) >= 12 ? 'PM' : 'AM'}` : ""}</p>
+              <p><strong>Guests:</strong> {guests} {parseInt(guests) === 1 ? 'person' : 'people'}</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+              className="bg-primary-purple hover:bg-secondary-purple"
+              onClick={viewBookings}
+            >
+              View My Bookings
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
