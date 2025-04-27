@@ -7,12 +7,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 const restaurantData = [
   {
     id: 1,
-    name: "Pasta Paradise",
-    cuisine: "Italian",
+    name: "Pasta Special",
+    cuisine: "Indian",
     rating: 4.8,
     image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=1470&ixlib=rb-4.0.3",
     address: "123 Flour Street, Pasta City",
-    phone: "+1 (555) 123-4567"
+    phone: "9689545085"
   },
   {
     id: 2,
@@ -21,7 +21,7 @@ const restaurantData = [
     rating: 4.7,
     image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=1470&ixlib=rb-4.0.3",
     address: "456 Rice Avenue, Sushi Town",
-    phone: "+1 (555) 987-6543"
+    phone: "9689545084"
   },
   {
     id: 3,
@@ -30,7 +30,7 @@ const restaurantData = [
     rating: 4.9,
     image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=1470&ixlib=rb-4.0.3",
     address: "789 Curry Lane, Spice City",
-    phone: "+1 (555) 456-7890"
+    phone: "9689545083"
   }
 ];
 
