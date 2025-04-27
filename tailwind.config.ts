@@ -61,7 +61,14 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Custom colors for Predin
+				'soft-purple': '#E5DEFF',
+				'soft-blue': '#D3E4FD',
+				'primary-purple': '#9b87f5',
+				'secondary-purple': '#7E69AB',
+				'dark-purple': '#1A1F2C',
+				'neutral-gray': '#8E9196'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -89,6 +96,12 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out'
+			},
+			backgroundImage: {
+				'gradient-soft': 'linear-gradient(135deg, #E5DEFF 0%, #D3E4FD 100%)',
+			},
+			boxShadow: {
+				'soft-shadow': '0 10px 30px -15px rgba(156, 135, 245, 0.4)',
 			}
 		}
 	},
